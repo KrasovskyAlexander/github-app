@@ -1,14 +1,16 @@
+import axios, { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { setUser } from '../store/actions/usersActions';
+import { IUser } from '../types/UserModel';
 import { UserActionType } from '../types/userTypes';
 
-const getUserFromApi = () => fetch('https://jsonplaceholder.typicode.com/users');
+const getUserFromApi = () => axios.get<IUser[]>("https://jsonplaceholder.typicode.com/users");
 
-function* fetchUserWorker(): any {
+function* fetchUserWorker() {
   try {
-    const response = yield call(getUserFromApi);
-    const json = yield call(() => new Promise(res => res(response.json())));
+    const response: Response = yield call(getUserFromApi);
+    const json: IUser[] = yield call(() => new Promise(res => res(response.json())));
     yield put(setUser(json));
   } catch (error) {
     console.log(error);
